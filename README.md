@@ -1,3 +1,1 @@
-# base-docker-odoo
-# base-docker-odoo
-# base-docker-odoo
+Simple Docker Compose for Odoo versions.
