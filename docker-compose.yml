@@ -1,0 +1,56 @@
+version: "3"
+services:
+  pos:
+    build:
+      context: .
+    container_name: pos
+    command: odoo -u pos_ingeint --dev=all
+    depends_on:
+      - pos_db
+    ports:
+      - "16000:8069"
+    volumes:
+      - odoo-web-pos:/var/lib/odoo
+      - ./config:/etc/odoo
+      # - ./enterprise:/mnt/extra-addons
+      - ./custom:/mnt/custom-addons
+    environment:
+      - PYTHONUNBUFFERED=0
+    # restart: always
+    networks:
+      - postgres_bd
+  pos_db:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - odoo-db-pos:/var/lib/postgresql/data/pgdata
+    # restart: always
+    networks:
+      - postgres_bd
+  pgadmin:
+    container_name: pos_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: jdap.dmc@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: odoo
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    networks:
+      - postgres_bd
+    volumes:
+        - pgadmin:/root/.pgadmin
+
+    ports:
+      - "80:80"    
+    # restart: unless-stopped
+
+networks:
+  postgres_bd:
+
+volumes:
+  odoo-web-pos:
+  odoo-db-pos:
+  pgadmin:
